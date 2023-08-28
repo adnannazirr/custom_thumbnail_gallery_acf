@@ -1,0 +1,146 @@
+//Thumbnail Gallery WordPress with ACF integration:   
+
+
+// Here's how you can implement the "Slick Carousel" library to achieve the desired behavior:
+
+// Enqueue the Slick Carousel library and jQuery in your WordPress theme's functions.php file:
+
+// Copy this code and paste in your theme's functions.php file. 
+
+function enqueue_slick_scripts() {
+    wp_enqueue_script('jquery');
+    wp_enqueue_script('slick', 'https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js', array('jquery'), '1.8.1', true);
+}
+add_action('wp_enqueue_scripts', 'enqueue_slick_scripts');
+
+
+// Now add this php code inside your page where you want the gallery. 
+
+<?php
+$images = get_field('project_gallery');
+
+if ($images) {
+    echo '<div class="product-gallery">';
+    
+    // Main slideshow
+    echo '<div class="main-slide">';
+    // Output main image
+    echo '<div class="image-container">';
+    echo '<div id="main-slider" class="slick-slider">';
+    foreach ($images as $image) {
+        $url = $image['url'];
+        $title = $image['title'];
+        echo '<div><img src="' . esc_url(wp_get_attachment_image_url($image['ID'], 'large')) . '" alt="' . esc_attr($title) . '"></div>';
+    }
+    echo '</div>';
+    echo '</div>';
+    echo '</div>';
+
+    // Thumbnails carousel
+    echo '<div class="thumbnails-carousel">';
+    echo '<div id="thumbnails-slider" class="slick-slider">';
+    foreach ($images as $image) {
+        $url = $image['url'];
+        $title = $image['title'];
+        echo '<div><img src="' . esc_url(wp_get_attachment_image_url($image['ID'], 'thumbnail')) . '" alt="' . esc_attr($title) . '"></div>';
+    }
+    echo '</div>';
+    echo '</div>';
+
+    echo '</div>';
+}
+?>
+
+
+//Use this stying 
+
+
+<style>
+/* ... Your existing styles ... */
+#main-slider, #thumbnails-slider {
+    max-width: 1270px; /* Adjusted image size */
+    margin: 0 auto;
+}
+
+#main-slider img, #thumbnails-slider img {
+    width: 100%;
+    height: 600px;
+    object-fit: cover;
+}
+
+.main-slide {
+    position: relative;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#main-slider .slick-slider {
+    position: relative;
+}
+
+.thumbnails-carousel {
+    margin-top: 10px;
+    text-align: center;
+}
+
+#thumbnails-slider .slick-slide {
+    margin: 0 10px;
+}
+
+#thumbnails-slider .slick-list {
+    overflow: hidden;
+}
+
+#thumbnails-slider img {
+    display: inline-block;
+    max-width: 100%;
+    height: auto;
+    cursor: pointer;
+}
+
+.slick-prev:before,
+.slick-next:before {
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    color: white; /* Add this line to set the arrow icons' color */
+}
+
+.slick-prev:before {
+    content: '\f104'; /* Left arrow icon */
+}
+
+.slick-next:before {
+    content: '\f105'; /* Right arrow icon */
+}
+</style>
+
+
+
+// use this javascript
+
+<script>
+jQuery(document).ready(function($) {
+    $('#main-slider').slick({
+        asNavFor: '#thumbnails-slider',
+        fade: true,
+        prevArrow: '<button type="button" class="slick-prev"></button>',
+        nextArrow: '<button type="button" class="slick-next"></button>'
+    });
+
+    $('#thumbnails-slider').slick({
+        asNavFor: '#main-slider',
+        slidesToShow: 5,
+        slidesToScroll: 1,
+        focusOnSelect: true,
+        responsive: [
+            {
+                breakpoint: 768,
+                settings: {
+                    slidesToShow: 3
+                }
+            }
+        ]
+    });
+});
+</script>
+
